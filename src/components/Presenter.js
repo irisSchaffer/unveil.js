@@ -16,8 +16,27 @@ export default React.createClass({
       return slide
   },
 
+  controlsElements: function () {
+    let controls = this.getMode().controls.map( (control) => {
+      const props = {
+        key: control.displayName,
+        navigator: this.navigator,
+        stateSubject: this.stateSubject
+      };
+      return React.createElement(control, props);
+    });
+
+    return React.createElement('controls', null, controls);
+  },
+
+
   render: function () {
-    return this.getSlide(this.props.routerState.indices);
+    return (
+      <div>
+        {this.controlsElements()}
+        {this.getSlide(this.props.routerState.indices)}
+      </div>
+    )
   }
 
 });

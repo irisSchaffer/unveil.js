@@ -49,7 +49,7 @@ export default React.createClass({
 
     this.stateSubject   = new Subject();
     this.history        = this.props.history || history;
-    this.slides         = this.props.children.toList();
+    this.slides         = this.autoNameSlides(this.props.children);
     this.getDirections  = this.props.getDirections || getDirections;
     this.map            = this.buildMap(this.slides);
     this.routerState    = { directions: [], query: {} };
@@ -65,6 +65,18 @@ export default React.createClass({
       .map(this.newSlide)
       .do((e) => console.log('map new slide', e))
       .subscribe(this.addSlide);
+  },
+
+  autoNameSlides: function (children, index = '') {
+    if (!Array.isArray(children) || children.length === 0) return children;
+    return children.toList()
+      .map((s, i) => {
+        let name = index + (s.props.name || i);
+        return React.cloneElement(
+          s, { name: name, key: name },
+          this.autoNameSlides(s.props.children, (name + '-'))
+        );
+      });
   },
 
   setup: function () {
@@ -90,11 +102,9 @@ export default React.createClass({
   },
 
   shutdown: function () {
-    //this.router.stop();
-    //this.routerUnsubscribe.unsubscribe();
-    //this.navigatorUnsubscribe.unsubscribe();
-    //this.router = null;
-    //this.navigator = null;
+    this.navigatorUnsubscribe.unsubscribe();
+    this.routerUnsubscribe.unsubscribe();
+    this.router.stop();
   },
 
   getMode: function () {

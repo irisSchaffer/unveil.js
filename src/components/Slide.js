@@ -44,29 +44,37 @@ export default React.createClass({
   },
 
   getScale: function () {
-    let verticalScale   = this.refs['slide-container'].offsetHeight / this.refs.slide.offsetHeight;
-    let horizontalScale = this.refs['slide-container'].offsetWidth  / this.refs.slide.offsetWidth;
+    let verticalScale   = this.refs[this.slideContainerRef].offsetHeight / this.refs[this.slideRef].offsetHeight;
+    let horizontalScale = this.refs[this.slideContainerRef].offsetWidth  / this.refs[this.slideRef].offsetWidth;
+
     let scale = Math.min(verticalScale, horizontalScale);
     return scale > 1 && 1 || scale;
+  },
+
+  componentWillMount: function () {
+    let slideRef = (base) => {
+      return base + '-' + this.props.name;
+    };
+
+    this.slideRef = slideRef('slide');
+    this.slideContainerRef = slideRef('slide-container');
   },
 
   componentDidMount: function () {
     ['load', 'resize'].forEach( function (event) {
       Observable.fromEvent(window, event)
-      .subscribe( function () {
-        this.scale = this.getScale();
-        this.forceUpdate();
-      }.bind(this));
+        .subscribe( function () {
+          this.scale = this.getScale();
+          this.forceUpdate();
+        }.bind(this));
     }.bind(this));
-  },
 
-  getNotes: function () {
-    return this.props.children.filter(Notes.isNotes).pop();
+    this.forceUpdate();
   },
 
   options: function () {
     let opts = {
-      ref: 'slide',
+      ref: this.slideRef,
       id: this.props.name || "",
       style: {
         transform: `translate(-50%, -50%) scale(${this.scale})`
@@ -75,12 +83,13 @@ export default React.createClass({
     if(this.shouldUseMarkdown())
       opts.dangerouslySetInnerHTML = {__html: this.fromMarkdown()};
     else
-      opts.children = this.props.children.filter((c) => !Notes.isNotes(c));
+      opts.children = this.props.children.toList()
+        .filter((c) => !Notes.isNotes(c));
     return this.defaults(opts);
   },
 
   render: function () {
-    return (<section ref="slide-container" className="slide">
+    return (<section ref={this.slideContainerRef} className="slide">
       <section {...this.options()} />
     </section>);
   }

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import React from 'react';
 
 import marked from 'marked';
+import Notes from './Notes';
 
 export default React.createClass({
 
@@ -59,6 +60,10 @@ export default React.createClass({
     }.bind(this));
   },
 
+  getNotes: function () {
+    return this.props.children.filter(Notes.isNotes).pop();
+  },
+
   options: function () {
     let opts = {
       ref: 'slide',
@@ -70,7 +75,7 @@ export default React.createClass({
     if(this.shouldUseMarkdown())
       opts.dangerouslySetInnerHTML = {__html: this.fromMarkdown()};
     else
-      opts.children = this.props.children;
+      opts.children = this.props.children.filter((c) => !Notes.isNotes(c));
     return this.defaults(opts);
   },
 

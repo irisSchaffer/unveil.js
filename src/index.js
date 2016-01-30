@@ -2,6 +2,7 @@ export History         from './helpers/History';
 export KeyControls     from './components/KeyControls';
 export Presenter       from './components/Presenter';
 export Slide           from './components/Slide';
+export Notes           from './components/Notes';
 export UIControls      from './components/UIControls';
 export TouchControls   from './components/TouchControls';
 export UnveilApp       from './components/UnveilApp';

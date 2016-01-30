@@ -4,12 +4,12 @@ import '../lib/Utils';
 export default React.createClass({
 
   propTypes: {
-    slides: React.PropTypes.array.isRequired,
-    routerState: React.PropTypes.object.isRequired
+    unveil: React.PropTypes.object.isRequired,
+    controls: React.PropTypes.array.isRequired
   },
 
   getSlide: function (indices) {
-    let slide = this.props.slides.toList()[indices[0]];
+    let slide = this.props.unveil.slides.toList()[indices[0]];
     if(indices.length > 1 )
       return slide.props.children.toList()[indices[1]];
     else
@@ -17,11 +17,11 @@ export default React.createClass({
   },
 
   controlsElements: function () {
-    let controls = this.getMode().controls.map( (control) => {
+    let controls = this.props.controls.map( (control) => {
       const props = {
         key: control.displayName,
-        navigator: this.navigator,
-        stateSubject: this.stateSubject
+        navigator: this.props.unveil.navigator,
+        stateSubject: this.props.unveil.stateSubject
       };
       return React.createElement(control, props);
     });
@@ -34,7 +34,7 @@ export default React.createClass({
     return (
       <div>
         {this.controlsElements()}
-        {this.getSlide(this.props.routerState.indices)}
+        {this.getSlide(this.props.unveil.routerState.indices)}
       </div>
     )
   }

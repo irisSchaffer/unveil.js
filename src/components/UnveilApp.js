@@ -147,8 +147,7 @@ export default React.createClass({
     return React.createElement(
       mode.presenter,
       {
-        routerState: this.routerState,
-        slides: this.slides,
+        unveil: this,
         controls: mode.controls
       }
     );

@@ -51,19 +51,13 @@ export default React.createClass({
     this.history        = this.props.history || history;
     this.slides         = this.autoNameSlides(this.props.children);
     this.getDirections  = this.props.getDirections || getDirections;
-    this.map            = this.buildMap(this.slides);
     this.routerState    = { directions: [], query: {} };
 
     this.setup();
 
     this.stateSubject
-      .do((e) => console.log('state subject', e))
       .filter(this.isAddSlide)
-      .do((e) => console.log('filter isAddSlide', e))
-      .pluck('data')
-      .do((e) => console.log('pluck data', e))
       .map(this.newSlide)
-      .do((e) => console.log('map new slide', e))
       .subscribe(this.addSlide);
   },
 
@@ -80,6 +74,8 @@ export default React.createClass({
   },
 
   setup: function () {
+    this.map = this.buildMap(this.slides);
+
     this.router = createRouter({
       map: this.map,
       history: this.history,
@@ -94,6 +90,7 @@ export default React.createClass({
       .subscribe(this.updateState);
 
     this.navigatorUnsubscribe = this.navigator.asObservable()
+      .do((e) => console.log('navigator subscribe', e))
       .subscribe(function(e) {
         this.router.go(e, this.routerState.query)
       }.bind(this));
@@ -116,14 +113,32 @@ export default React.createClass({
   },
 
   newSlide: function (data) {
-    return React.createElement(Slide, data.props, data.children);
+    return {
+      slide: React.createElement(Slide, {}, data.content),
+      method: data.method
+    };
   },
 
-  addSlide: function (slide) {
-    this.slides.splice(this.routerState.indices[0] + 1, 0, slide);
+  addSlide: function (data) {
+    let i;
+    // others could be 'after', 'under' etc.
+    switch(data.method) {
+      case 'append':
+        i = this.slides.length;
+        break;
+      default:
+        i = this.routerState.indices[0] + 1
+    }
+    console.log(i, this.slides.length, data.method);
+
+    this.slides.splice(i, 0, data.slide);
+    console.log('added', this.slides);
     this.shutdown();
     this.setup();
-    console.log(this);
+
+    this.forceUpdate();
+
+    console.log('navigator subject', this.navigator.subject);
   },
 
   getInitialState: function() {

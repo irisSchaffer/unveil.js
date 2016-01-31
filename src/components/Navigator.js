@@ -4,6 +4,8 @@ let createNavigator = (opts) => {
   let { stateObservable } = opts;
 
   let subject = new Subject();
+  let motionObservable;
+  let jumpObservable;
 
   let possibleMotions = [];
   let directions = {};
@@ -11,12 +13,12 @@ let createNavigator = (opts) => {
   /**
    * Maps motion-names to position in directions array
    *
-   * @type {[
+   * @type {{
    *  left:  {level: number, direction: string},
    *  up:    {level: number, direction: string},
    *  right: {level: number, direction: string},
    *  down:  {level: number, direction: string}
-   * ]}
+   * }}
    */
   let motions = {
     left:  { level: 0, direction: 'previous' },
@@ -33,7 +35,7 @@ let createNavigator = (opts) => {
     };
 
     return getMotionNames().reduce(reduce, {});
-  }
+  };
 
   /**
    * Get motion display names
@@ -45,7 +47,7 @@ let createNavigator = (opts) => {
 
   /**
    * Is direction possible?
-   * @param {string} direction
+   * @param {string} motion
    * @returns {boolean}
    */
   let isPossibleMotion = (motion) => {
@@ -101,12 +103,14 @@ let createNavigator = (opts) => {
    */
   let asObservable = () => {
     return Observable.merge(motionObservable, jumpObservable)
+      .do((e) => console.log('in navigator', e))
       .filter(isValidState)
   };
 
   // navigator.next("left");
   // navigator.next([0,1]);
   let next = (motion) => {
+    console.log('navigator next', motion);
     subject.next(motion);
   };
 
@@ -120,19 +124,25 @@ let createNavigator = (opts) => {
     });
 
   let directionsUpdater = stateObservable
-    .subscribe( (_directions) => {
-      directions = _directions
+    .subscribe( (newDirections) => {
+      directions = newDirections;
     });
 
-  let motionObservable = subject
-    .filter(isValidMotion)
-    .filter(isPossibleMotion)
-    .map(toLevelAndDirection)
-    .map(toState)
+  let start = function() {
+    subject = subject || new Subject();
 
-  let jumpObservable = subject
-    .filter(isJumpMotion)
-    .map(toNumericIndices)
+    motionObservable = subject
+      .filter(isValidMotion)
+      .filter(isPossibleMotion)
+      .map(toLevelAndDirection)
+      .map(toState);
+
+    jumpObservable = subject
+      .filter(isJumpMotion)
+      .map(toNumericIndices);
+  };
+
+  start();
 
   return {
     asObservable,

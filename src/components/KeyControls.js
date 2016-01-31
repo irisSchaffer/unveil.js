@@ -18,18 +18,30 @@ export default React.createClass({
   getInitialState: () => ({ key: 'none' }),
 
   componentDidMount: function () {
-    Observable.fromEvent(document, 'keyup')
+    this.setup();
+  },
+
+  componentDidUpdate: function () {
+    this.tearDown();
+    this.setup();
+  },
+
+  setup: function () {
+    this.observable = Observable.fromEvent(document, 'keyup')
       .pluck('keyCode')
-      .map( (code) => this.mappings[code] )
+      .map((code) => this.mappings[code])
       .filter( (motion) => motion !== undefined )
-      .do( function (key) {
-        this.setState({key});
-      }.bind(this))
       .subscribe(this.props.navigator.next);
   },
 
+  tearDown: function () {
+    if (this.observable) {
+      this.observable.unsubscribe();
+    }
+  },
+
   render: function () {
-    return (<div></div>);
+    return false;
   }
 
 });

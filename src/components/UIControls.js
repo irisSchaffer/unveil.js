@@ -14,16 +14,30 @@ export default React.createClass({
   },
 
   componentWillMount: function () {
+    this.setup();
+  },
+
+  componentDidUpdate: function () {
+    this.setup();
+  },
+
+  componentWillUnmount: function () {
+    this.clicks.complete();
+  },
+
+  setup: function () {
     this.motions = this.props.navigator.motionNames;
-    this.clicks = new Subject();
+    this.clicks = this.clicks || new Subject();
     this.clicks
       .pluck('target', 'id')
       .filter(this.isValidMotion)
       .subscribe(this.props.navigator.next);
   },
 
-  componentWillUnmount: function () {
-    this.clicks.complete();
+  tearDown: function () {
+    if (this.subject) {
+      this.subject.unsubscribe();
+    }
   },
 
   next: function (e) {

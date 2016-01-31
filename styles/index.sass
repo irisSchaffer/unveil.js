@@ -9,7 +9,6 @@
   font-size: 1rem
 
   .ui-controls
-
     a
       transition: opacity .25s
       position: absolute
@@ -76,6 +75,11 @@
       padding: 3rem
       transform: translate(-50%, -50%)
 
+      @media (max-width: 720px)
+        max-width: initial
+        width: auto
+        min-width: 100%
+
     h1
       font-size: 3rem
       margin: 1rem
@@ -94,6 +98,15 @@
       max-height: 100%
       display: inline-block
 
+
+  blockquote
+    margin-right: 0
+
+    &:before
+      content: open-quote
+
+    &:after
+      content: close-quote
 
 .slide-appear
   opacity: 0.00

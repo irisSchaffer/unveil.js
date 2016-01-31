@@ -110,7 +110,7 @@ let createNavigator = (opts) => {
   // navigator.next("left");
   // navigator.next([0,1]);
   let next = (motion) => {
-    console.log('navigator next', motion);
+    console.log('navigator next', subject);
     subject.next(motion);
   };
 
@@ -149,7 +149,8 @@ let createNavigator = (opts) => {
     isPossibleMotion,
     directions,
     motionNames: getMotionNames(),
-    next
+    next,
+    subject
   };
 };
 

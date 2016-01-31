@@ -18,6 +18,7 @@ export default React.createClass({
   },
 
   componentDidUpdate: function () {
+    this.tearDown();
     this.setup();
   },
 

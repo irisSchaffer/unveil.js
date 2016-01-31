@@ -98,7 +98,7 @@ export default React.createClass({
     this.router.start();
   },
 
-  shutdown: function () {
+  tearDown: function () {
     this.navigatorUnsubscribe.unsubscribe();
     this.routerUnsubscribe.unsubscribe();
     this.router.stop();
@@ -133,7 +133,7 @@ export default React.createClass({
 
     this.slides.splice(i, 0, data.slide);
     console.log('added', this.slides);
-    this.shutdown();
+    this.tearDown();
     this.setup();
 
     this.forceUpdate();

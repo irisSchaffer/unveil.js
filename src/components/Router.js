@@ -21,13 +21,17 @@ let createRouter = function(opts) {
     return subject;
   };
 
-  Observable.fromRouter = fromRouter;
+  let setMap = function(newMap) {
+    map = newMap;
+  };
 
   let Path = {
     cleanUp: path => (path.trim())
   };
 
   let start = () => {
+    Observable.fromRouter = fromRouter;
+
     subject = subject || new Subject();
 
     let outAction = (action) => {
@@ -224,6 +228,7 @@ let createRouter = function(opts) {
     start,
     stop,
     go,
+    setMap,
     asObservable
   }
 };

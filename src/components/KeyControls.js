@@ -21,7 +21,7 @@ export default React.createClass({
     this.setup();
   },
 
-  componentDidUpdate: function () {
+  componentWillReceiveProps: function () {
     this.tearDown();
     this.setup();
   },

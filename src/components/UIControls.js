@@ -17,7 +17,7 @@ export default React.createClass({
     this.setup();
   },
 
-  componentDidUpdate: function () {
+  componentWillReceiveProps: function () {
     this.tearDown();
     this.setup();
   },
@@ -29,15 +29,15 @@ export default React.createClass({
   setup: function () {
     this.motions = this.props.navigator.motionNames;
     this.clicks = this.clicks || new Subject();
-    this.clicks
+    this.clickSubscription = this.clicks
       .pluck('target', 'id')
       .filter(this.isValidMotion)
       .subscribe(this.props.navigator.next);
   },
 
   tearDown: function () {
-    if (this.subject) {
-      this.subject.unsubscribe();
+    if (this.clickSubscription) {
+      this.clickSubscription.unsubscribe();
     }
   },
 

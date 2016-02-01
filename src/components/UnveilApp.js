@@ -133,10 +133,12 @@ export default React.createClass({
 
     this.slides.splice(i, 0, data.slide);
     console.log('added', this.slides);
-    this.tearDown();
-    this.setup();
+    //this.tearDown();
+    //this.setup();
+    //
+    //this.forceUpdate();
 
-    this.forceUpdate();
+    this.router.setMap(this.buildMap(this.slides));
 
     console.log('navigator subject', this.navigator.subject);
   },

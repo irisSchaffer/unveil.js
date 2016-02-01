@@ -49,19 +49,38 @@ export default React.createClass({
 
   getInitialState: () => ({ key: 'none' }),
 
-  componentDidMount: function () {
-    Observable.fromEvent(document, 'touchstart')
+  componentWillMount: function () {
+    this.setup();
+  },
+
+  componentWillReceiveProps: function () {
+    this.tearDown();
+    this.setup();
+  },
+
+  setup: function () {
+    this.startObservable = Observable.fromEvent(document, 'touchstart')
       .map(this.toXY)
       .do((xy) => console.log("starting", xy))
       .subscribe(this.saveCoords);
 
-    Observable.fromEvent(document, 'touchmove')
+    this.moveObservable = Observable.fromEvent(document, 'touchmove')
       .filter(this.touchStarted)
       .do((xy) => console.log("moving", xy))
       .map(this.toXY)
       .map(this.toDirection)
       .do(this.resetTouchStart)
       .subscribe(this.props.navigator.next);
+  },
+
+  tearDown: function () {
+    if (this.startObservable) {
+      this.startObservable.unsubscribe();
+    }
+
+    if (this.moveObservable) {
+      this.moveObservable.unsubscribe();
+    }
   },
 
   render: function () {

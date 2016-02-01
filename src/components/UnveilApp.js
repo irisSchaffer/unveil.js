@@ -65,6 +65,8 @@ export default React.createClass({
     if (!Array.isArray(children) || children.length === 0) return children;
     return children.toList()
       .map((s, i) => {
+        if (!Slide.isSlide(s)) return s;
+
         let name = index + (s.props.name || i);
         return React.cloneElement(
           s, { name: name, key: name },
@@ -136,7 +138,7 @@ export default React.createClass({
     //this.tearDown();
     //this.setup();
     //
-    //this.forceUpdate();
+    this.forceUpdate();
 
     this.router.setMap(this.buildMap(this.slides));
 

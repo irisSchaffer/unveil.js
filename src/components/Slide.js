@@ -75,7 +75,6 @@ export default React.createClass({
   options: function () {
     let opts = {
       ref: this.slideRef,
-      id: this.props.name || "",
       style: {
         transform: `translate(-50%, -50%) scale(${this.scale})`
       }
@@ -89,9 +88,11 @@ export default React.createClass({
   },
 
   render: function () {
-    return (<section ref={this.slideContainerRef} className="slide">
-      <section {...this.options()} />
-    </section>);
+    return (
+      <section ref={this.slideContainerRef} id={this.props.name || ""} className="slide">
+        <section {...this.options()} />
+      </section>
+    );
   }
 
 });

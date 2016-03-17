@@ -136,27 +136,29 @@ export default React.createClass({
   },
 
   addSlide: function (data) {
-    let i;
+    const i = data.location.indices;
     // others could be 'after', 'under' etc.
-    switch(data.method) {
-      case 'append':
-        i = this.slides.length;
-        break;
-      default:
-        i = this.routerState.indices[0] + 1
-    }
     console.log(i, this.slides.length, data.method);
 
+    // @TODO: ADD AS SUBSLIDE!!
+
+    // switch(data.method) {
+    //   case 'append':
+    //     i = this.slides.length
+    //     break
+    //   case 'next':
+    //     i = this.slides.length
+    //     break
+    //   default:
+    //     i = this.routerState.indices[0] + 1
+    // }
     this.slides.splice(i, 0, data.slide);
     console.log('added', this.slides);
     //this.tearDown();
     //this.setup();
-    //
-    //this.forceUpdate();
 
     this.router.setMap(this.buildMap(this.slides));
-
-    console.log('navigator subject', this.navigator.subject);
+    this.forceUpdate();
   },
 
   getInitialState: function() {

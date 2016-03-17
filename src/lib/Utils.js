@@ -23,5 +23,5 @@ Array.prototype.equals = function (other) {
     return (a[0] === b[0]) && deepEqual(a.slice(1),b.slice(1));
   }
 
-  return this.length === other.length && deepEqual(this, other);
+  return Array.isArray(other) && this.length === other.length && deepEqual(this, other);
 };

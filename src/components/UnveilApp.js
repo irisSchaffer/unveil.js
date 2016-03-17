@@ -8,10 +8,10 @@ import Presenter from './Presenter';
 import KeyControls from './KeyControls';
 import UIControls  from './UIControls';
 
-import getDirections        from '../getDirections';
-import createRouter         from './Router';
-import createNavigator      from './Navigator';
-import history              from '../helpers/History';
+import getDirections   from '../getDirections';
+import createRouter    from './Router';
+import createNavigator from './Navigator';
+import history         from '../helpers/History';
 
 import '../lib/Utils';
 
@@ -61,10 +61,26 @@ export default React.createClass({
       .subscribe(this.addSlide);
   },
 
+  childContextTypes: {
+    mode: React.PropTypes.string,
+    routerState: React.PropTypes.object
+  },
+
+  getChildContext: function() {
+    return {
+      mode: this.state.mode,
+      routerState: this.routerState
+    };
+  },
+
   autoNameSlides: function (children, index = '') {
     if (!Array.isArray(children) || children.length === 0) return children;
     return children.toList()
       .map((s, i) => {
+        if (!Slide.isSlide(s)) {
+          return s
+        }
+
         let name = index + (s.props.name || i);
         return React.cloneElement(
           s, { name: name, key: name },
@@ -154,7 +170,7 @@ export default React.createClass({
 
     return {
       currentSlide: getFirstChildIfSlides(this.props.children[0]),
-      mode: 'default'
+      mode:         'default'
     };
   },
 

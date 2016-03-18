@@ -130,29 +130,37 @@ export default React.createClass({
 
   newSlide: function (data) {
     return {
+      ...data,
       slide: React.createElement(Slide, {}, data.content),
-      method: data.method
     };
   },
 
+  addSubslide: function (target, newSlide) {
+    let parentSlide = this.slides[target[0]]
+    if (target.length > 1) {
+      let children = parentSlide.props.children
+      children.push(newSlide)
+      parentSlide = React.cloneElement(parentSlide, {}, children)
+    } else {
+      let newSubslide = React.cloneElement(parentSlide, {id: undefined, name: undefined})
+      parentSlide = React.cloneElement(parentSlide, {}, [newSubslide, newSlide])
+    }
+
+    this.slides.splice(target[0], 1, parentSlide)
+  },
+
   addSlide: function (data) {
+    console.log(data)
     const i = data.location.indices;
-    // others could be 'after', 'under' etc.
-    console.log(i, this.slides.length, data.method);
 
-    // @TODO: ADD AS SUBSLIDE!!
+    switch(data.method) {
+      case 'after':
+        this.slides.splice(i + 1, 0, data.slide)
+        break
+      default:
+        this.addSubslide(i, data.slide)
+    }
 
-    // switch(data.method) {
-    //   case 'append':
-    //     i = this.slides.length
-    //     break
-    //   case 'next':
-    //     i = this.slides.length
-    //     break
-    //   default:
-    //     i = this.routerState.indices[0] + 1
-    // }
-    this.slides.splice(i, 0, data.slide);
     console.log('added', this.slides);
     //this.tearDown();
     //this.setup();

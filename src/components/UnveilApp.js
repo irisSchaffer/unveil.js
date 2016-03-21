@@ -162,11 +162,9 @@ export default React.createClass({
     }
 
     console.log('added', this.slides);
-    //this.tearDown();
-    //this.setup();
 
-    this.router.setMap(this.buildMap(this.slides));
-    this.forceUpdate();
+    this.router.setMap(this.buildMap(this.slides))
+    this.router.go(i, this.routerState.query)
   },
 
   getInitialState: function() {

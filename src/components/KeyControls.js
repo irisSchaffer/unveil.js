@@ -8,6 +8,10 @@ export default React.createClass({
     navigator: React.PropTypes.object.isRequired
   },
 
+  contextTypes: {
+    navigatable: React.PropTypes.bool
+  },
+
   mappings: {
     37: 'left',
     38: 'up',
@@ -28,6 +32,7 @@ export default React.createClass({
 
   setup: function () {
     this.observable = Observable.fromEvent(document, 'keyup')
+      .filter(() => this.context.navigatable)
       .do((e) => console.log('key controls', this.props))
       .pluck('keyCode')
       .map((code) => this.mappings[code])

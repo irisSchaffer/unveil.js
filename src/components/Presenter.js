@@ -8,12 +8,8 @@ export default React.createClass({
     controls: React.PropTypes.array.isRequired
   },
 
-  getSlide: function (indices) {
-    let slide = this.props.unveil.slides.toList()[indices[0]];
-    if(indices.length > 1 )
-      return slide.props.children.toList()[indices[1]];
-    else
-      return slide
+  contextTypes: {
+    slide: React.PropTypes.node.isRequired
   },
 
   controlsElements: function () {
@@ -34,7 +30,7 @@ export default React.createClass({
     return (
       <div>
         {this.controlsElements()}
-        {this.getSlide(this.props.unveil.routerState.indices)}
+        {this.context.slide}
       </div>
     )
   }

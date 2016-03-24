@@ -9,6 +9,10 @@ export default React.createClass({
     navigator: React.PropTypes.object.isRequired
   },
 
+  contextTypes: {
+    navigatable: React.PropTypes.bool
+  },
+
   isValidMotion: function (motion) {
     return this.motions.indexOf(motion) !== -1;
   },
@@ -63,7 +67,7 @@ export default React.createClass({
   },
 
   render: function () {
-    return (<div className="ui-controls">{this.buttons()}</div>);
+    return this.context.navigatable && (<div className="ui-controls">{this.buttons()}</div>) || false
   }
 
 });

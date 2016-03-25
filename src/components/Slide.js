@@ -95,9 +95,11 @@ export default React.createClass({
   },
 
   render: function () {
-    return (<section ref={this.slideContainerRef} id={this.props.name} className="slide">
-      <section {...this.options()} />
-    </section>);
+    return (
+      <section ref={this.slideContainerRef} id={this.props.name || ''} className="slide">
+        <section {...this.options()} />
+      </section>
+    );
   }
 
 });

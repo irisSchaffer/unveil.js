@@ -8,10 +8,10 @@ import Presenter from './Presenter';
 import KeyControls from './KeyControls';
 import UIControls  from './UIControls';
 
-import getDirections        from '../getDirections';
-import createRouter         from './Router';
-import createNavigator      from './Navigator';
-import history              from '../helpers/History';
+import getDirections   from '../getDirections';
+import createRouter    from './Router';
+import createNavigator from './Navigator';
+import history         from '../helpers/History';
 
 import '../lib/Utils';
 
@@ -56,16 +56,44 @@ export default React.createClass({
     this.setup();
 
     this.stateSubject
-      .filter(this.isAddSlide)
+      .filter(this.isEventOfType('state/slide:add'))
       .map(this.newSlide)
       .subscribe(this.addSlide);
+
+    this.stateSubject
+      .filter(this.isEventOfType('state/navigation:enable'))
+      .subscribe(() => this.setState({navigatable: true}));
+
+    this.stateSubject
+      .filter(this.isEventOfType('state/navigation:disable'))
+      .subscribe(() => this.setState({navigatable: false}));
+  },
+
+  childContextTypes: {
+    mode:         React.PropTypes.string,
+    routerState:  React.PropTypes.object,
+    navigatable:  React.PropTypes.bool,
+    slide:        React.PropTypes.node,
+    stateSubject: React.PropTypes.object
+  },
+
+  getChildContext: function() {
+    return {
+      mode:         this.state.mode,
+      routerState:  this.routerState,
+      navigatable:  this.state.navigatable,
+      slide:        this.getSlide(this.routerState.indices),
+      stateSubject: this.stateSubject
+    };
   },
 
   autoNameSlides: function (children, index = '') {
     if (!Array.isArray(children) || children.length === 0) return children;
     return children.toList()
       .map((s, i) => {
-        if (!Slide.isSlide(s)) return s;
+        if (!Slide.isSlide(s)) {
+          return s
+        }
 
         let name = index + (s.props.name || i);
         return React.cloneElement(
@@ -110,53 +138,55 @@ export default React.createClass({
     return this.modes[this.state.mode] || this.modes['default'];
   },
 
-  isAddSlide: function (event) {
-    return event.type && event.type === 'state/slide:add'
+  isEventOfType: function(type) {
+    return function (event) {
+      return event.type && event.type === type
+    }
   },
 
   newSlide: function (data) {
     return {
+      ...data,
       slide: React.createElement(Slide, {}, data.content),
-      method: data.method
     };
+  },
+
+  addSubslide: function (target, newSlide) {
+    let parentSlide = this.slides[target[0]]
+    if (target.length > 1) {
+      let children = parentSlide.props.children
+      children.push(newSlide)
+      parentSlide = React.cloneElement(parentSlide, {}, children)
+    } else {
+      let newSubslide = React.cloneElement(parentSlide, {id: undefined, name: undefined})
+      parentSlide = React.cloneElement(parentSlide, {}, [newSubslide, newSlide])
+    }
+
+    this.slides.splice(target[0], 1, parentSlide)
   },
 
   addSlide: function (data) {
-    let i;
-    // others could be 'after', 'under' etc.
+    console.log(data)
+    const i = data.location.indices;
+
     switch(data.method) {
-      case 'append':
-        i = this.slides.length;
-        break;
+      case 'after':
+        this.slides.splice(i + 1, 0, data.slide)
+        break
       default:
-        i = this.routerState.indices[0] + 1
+        this.addSubslide(i, data.slide)
     }
-    console.log(i, this.slides.length, data.method);
 
-    this.slides.splice(i, 0, data.slide);
     console.log('added', this.slides);
-    //this.tearDown();
-    //this.setup();
-    //
-    this.forceUpdate();
 
-    this.router.setMap(this.buildMap(this.slides));
-
-    console.log('navigator subject', this.navigator.subject);
+    this.router.setMap(this.buildMap(this.slides))
+    this.router.go(i, this.routerState.query)
   },
 
   getInitialState: function() {
-    let getFirstChildIfSlides = (slide) => {
-      if (!this.areSlides(slide.props.children)) {
-        return slide;
-      } else {
-        return getFirstChildIfSlides(slide.props.children[0]);
-      }
-    };
-
     return {
-      currentSlide: getFirstChildIfSlides(this.props.children[0]),
-      mode: 'default'
+      mode:         'default',
+      navigatable:  true
     };
   },
 
@@ -168,8 +198,20 @@ export default React.createClass({
   areSlides: function (children) {
     return children.toList()
       .map(Slide.isSlide)
-      .reduce( (a,b) => (a&&b), true );
+      .reduce((a,b) => (a&&b), true);
   },
+
+  getSlide: function (indices) {
+    let slide = this.slides.toList()[indices[0]];
+    if (indices.length === 1 && this.areSlides(slide.props.children)) {
+      indices[1] = 0;
+    }
+    if(indices.length > 1)
+      return slide.props.children.toList()[indices[1]];
+    else
+      return slide
+  },
+
 
   presenterElement: function() {
     let mode = this.getMode();

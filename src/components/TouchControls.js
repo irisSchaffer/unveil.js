@@ -8,6 +8,10 @@ export default React.createClass({
     navigator: React.PropTypes.object.isRequired
   },
 
+  contextTypes: {
+    navigatable: React.PropTypes.bool
+  },
+
   threshold: 0,
 
   touchStarted: function () {
@@ -60,11 +64,13 @@ export default React.createClass({
 
   setup: function () {
     this.startObservable = Observable.fromEvent(document, 'touchstart')
+      .filter(() => this.context.navigatable)
       .map(this.toXY)
       .do((xy) => console.log("starting", xy))
       .subscribe(this.saveCoords);
 
     this.moveObservable = Observable.fromEvent(document, 'touchmove')
+      .filter(() => this.context.navigatable)
       .filter(this.touchStarted)
       .do((xy) => console.log("moving", xy))
       .map(this.toXY)

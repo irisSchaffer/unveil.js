@@ -33,6 +33,7 @@ export default React.createClass({
   setup: function () {
     this.motions = this.props.navigator.motionNames;
     this.clicks = this.clicks || new Subject();
+
     this.clickSubscription = this.clicks
       .pluck('target', 'id')
       .filter(this.isValidMotion)

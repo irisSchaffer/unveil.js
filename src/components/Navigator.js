@@ -1,7 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 
 let createNavigator = (opts) => {
-  let { stateObservable } = opts;
+  let { stateObservable, history } = opts;
 
   let subject = new Subject();
   let motionObservable;
@@ -110,6 +110,10 @@ let createNavigator = (opts) => {
   // navigator.next("left");
   // navigator.next([0,1]);
   let next = (motion) => {
+    if (motion === 'left') {
+      history.goBack()
+    }
+
     console.log('navigator next', subject);
     subject.next(motion);
   };

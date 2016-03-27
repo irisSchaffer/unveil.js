@@ -74,7 +74,8 @@ export default React.createClass({
     routerState:  React.PropTypes.object,
     navigatable:  React.PropTypes.bool,
     slide:        React.PropTypes.node,
-    stateSubject: React.PropTypes.object
+    stateSubject: React.PropTypes.object,
+    history:      React.PropTypes.object
   },
 
   getChildContext: function() {
@@ -83,7 +84,8 @@ export default React.createClass({
       routerState:  this.routerState,
       navigatable:  this.state.navigatable,
       slide:        this.getSlide(this.routerState.indices),
-      stateSubject: this.stateSubject
+      stateSubject: this.stateSubject,
+      history:      this.history
     };
   },
 
@@ -113,7 +115,8 @@ export default React.createClass({
     });
 
     this.navigator = (this.props.navigator || createNavigator)({
-      stateObservable: this.router.asObservable().pluck('directions')
+      stateObservable: this.router.asObservable().pluck('directions'),
+      history:         this.history
     });
 
     this.routerUnsubscribe = this.router.asObservable()

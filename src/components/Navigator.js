@@ -1,14 +1,15 @@
 import { Observable, Subject } from 'rxjs';
 
 let createNavigator = (opts) => {
-  let { stateObservable } = opts;
+  let { stateObservable } = opts
 
-  let subject = new Subject();
-  let motionObservable;
-  let jumpObservable;
+  let subject = new Subject()
+  let motionObservable
+  let jumpObservable
 
-  let possibleMotions = [];
-  let directions = {};
+  let possibleMotions = []
+  let directions      = {}
+  let slide           = {}
 
   /**
    * Maps motion-names to position in directions array
@@ -111,23 +112,25 @@ let createNavigator = (opts) => {
   let next = (motion) => {
     if (motion === 'left') {
       history.back()
+    } else {
+      subject.next(slide && slide.props[motion] || motion)
     }
-
-    subject.next(motion);
   };
 
   /*
    * Here's where the magic happens: Observability!
    */
   let motionUpdater = stateObservable
+    .pluck('directions')
     .map(toPossibleMotions)
     .subscribe( (motions) => {
       possibleMotions = motions
     });
 
   let directionsUpdater = stateObservable
-    .subscribe( (newDirections) => {
-      directions = newDirections;
+    .subscribe( (newState) => {
+      directions = newState.directions
+      slide      = newState.slide
     });
 
   let start = function() {

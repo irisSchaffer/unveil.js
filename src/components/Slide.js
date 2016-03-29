@@ -10,7 +10,11 @@ export default React.createClass({
   scale: 1,
 
   propTypes: {
-    name: React.PropTypes.string
+    name:  React.PropTypes.string,
+    left:  React.PropTypes.array,
+    right: React.PropTypes.array,
+    up:    React.PropTypes.array,
+    down:  React.PropTypes.array
   },
 
   statics: {

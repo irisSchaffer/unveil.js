@@ -115,7 +115,7 @@ export default React.createClass({
     });
 
     this.navigator = (this.props.navigator || createNavigator)({
-      stateObservable: this.router.asObservable().pluck('directions'),
+      stateObservable: this.router.asObservable().map((routerState) => ({...routerState, slide: this.getSlide(routerState.indices)})),
       history:         this.history
     });
 
@@ -172,7 +172,7 @@ export default React.createClass({
 
     switch(data.method) {
       case 'after':
-        this.slides.splice(i + 1, 0, data.slide)
+        this.slides.splice(i[0] + 1, 0, data.slide)
         break
       default:
         this.addSubslide(i, data.slide)
@@ -180,6 +180,7 @@ export default React.createClass({
 
     this.router.setMap(this.buildMap(this.slides))
     this.router.go(i, this.routerState.query)
+    this.forceUpdate()
   },
 
   getInitialState: function() {

@@ -155,6 +155,7 @@ export default React.createClass({
 
   addSubslide: function (target, newSlide) {
     let parentSlide = this.slides[target[0]]
+    console.log(target, target.length)
     if (target.length > 1) {
       let children = parentSlide.props.children
       children.push(newSlide)
@@ -173,14 +174,19 @@ export default React.createClass({
     switch(data.method) {
       case 'after':
         this.slides.splice(i[0] + 1, 0, data.slide)
+        this.router.setMap(this.buildMap(this.slides))
+        this.forceUpdate()
         break
+
+      case 'under':
+        this.addSubslide(i, data.slide)
+        this.router.setMap(this.buildMap(this.slides))
+        this.router.go(i, this.routerState.query)
+
       default:
         this.addSubslide(i, data.slide)
+        this.router.setMap(this.buildMap(this.slides))
     }
-
-    this.router.setMap(this.buildMap(this.slides))
-    this.router.go(i, this.routerState.query)
-    this.forceUpdate()
   },
 
   getInitialState: function() {

@@ -123,7 +123,6 @@ export default React.createClass({
       .subscribe(this.updateState);
 
     this.navigatorUnsubscribe = this.navigator.asObservable()
-      .do((e) => console.log('navigator subscribe', e))
       .subscribe(function(e) {
         this.router.go(e, this.routerState.query)
       }.bind(this));
@@ -169,7 +168,6 @@ export default React.createClass({
   },
 
   addSlide: function (data) {
-    console.log(data)
     const i = data.location.indices;
 
     switch(data.method) {
@@ -179,8 +177,6 @@ export default React.createClass({
       default:
         this.addSubslide(i, data.slide)
     }
-
-    console.log('added', this.slides);
 
     this.router.setMap(this.buildMap(this.slides))
     this.router.go(i, this.routerState.query)

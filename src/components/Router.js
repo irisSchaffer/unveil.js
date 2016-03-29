@@ -41,7 +41,7 @@ let createRouter = function(opts) {
     observables.history = Observable.fromHistory(history)
       //.do((e) => console.log("     history => filter outAction", e))
       .filter(outAction('REPLACE'))
-      //.do((e) => console.log("     history => toPathAndQuery", e))
+      // .do((e) => console.log("     history => toPathAndQuery", e))
       .map(toPathnameAndQuery)
       //.do((e) => console.log("     history => Path.cleanup", e))
       .map(stateWith('pathname', Path.cleanUp, 'pathname'))

@@ -1,7 +1,7 @@
 import { Observable, Subject } from 'rxjs';
 
 let createNavigator = (opts) => {
-  let { stateObservable, history } = opts;
+  let { stateObservable } = opts;
 
   let subject = new Subject();
   let motionObservable;
@@ -103,7 +103,6 @@ let createNavigator = (opts) => {
    */
   let asObservable = () => {
     return Observable.merge(motionObservable, jumpObservable)
-      .do((e) => console.log('in navigator', e))
       .filter(isValidState)
   };
 
@@ -111,10 +110,9 @@ let createNavigator = (opts) => {
   // navigator.next([0,1]);
   let next = (motion) => {
     if (motion === 'left') {
-      history.goBack()
+      history.back()
     }
 
-    console.log('navigator next', subject);
     subject.next(motion);
   };
 

@@ -71,6 +71,7 @@ export default React.createClass({
 
   childContextTypes: {
     mode:         React.PropTypes.string,
+    navigator:    React.PropTypes.object,
     routerState:  React.PropTypes.object,
     navigatable:  React.PropTypes.bool,
     slide:        React.PropTypes.node,
@@ -81,6 +82,7 @@ export default React.createClass({
   getChildContext: function() {
     return {
       mode:         this.state.mode,
+      navigator:    this.navigator,
       routerState:  this.routerState,
       navigatable:  this.state.navigatable,
       slide:        this.getSlide(this.routerState.indices),
@@ -155,14 +157,14 @@ export default React.createClass({
 
   addSubslide: function (target, newSlide) {
     let parentSlide = this.slides[target[0]]
-    console.log(target, target.length)
+
     if (target.length > 1) {
       let children = parentSlide.props.children
       children.push(newSlide)
       parentSlide = React.cloneElement(parentSlide, {}, children)
     } else {
-      let newSubslide = React.cloneElement(parentSlide, {id: undefined, name: undefined})
-      parentSlide = React.cloneElement(parentSlide, {}, [newSubslide, newSlide])
+      let newSubslide = React.createElement(Slide, {id: undefined, name: undefined}, parentSlide.props.children)
+      parentSlide = React.createElement(Slide, {id: parentSlide.props.id, name:parentSlide.props.name}, [newSubslide, newSlide])
     }
 
     this.slides.splice(target[0], 1, parentSlide)

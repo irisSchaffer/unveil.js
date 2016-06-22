@@ -181,13 +181,10 @@ export default React.createClass({
         break
 
       case 'under':
-        this.addSubslide(i, data.slide)
-        this.router.setMap(this.buildMap(this.slides))
-        this.router.go(i, this.routerState.query)
-
       default:
         this.addSubslide(i, data.slide)
         this.router.setMap(this.buildMap(this.slides))
+        this.router.go(i, this.routerState.query)
     }
   },
 

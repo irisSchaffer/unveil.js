@@ -110,11 +110,7 @@ let createNavigator = (opts) => {
   // navigator.next("left");
   // navigator.next([0,1]);
   let next = (motion) => {
-    if (motion === 'left') {
-      history.back()
-    } else {
       subject.next(slide && slide.props[motion] || motion)
-    }
   };
 
   /*

@@ -160,7 +160,7 @@ export default React.createClass({
   addSubslide: function (target, newSlide) {
     let parentSlide = this.slides[target[0]]
 
-    if (target.length > 1) {
+    if (this.areSlides(parentSlide.props.children)) {
       let children = parentSlide.props.children
       children.push(newSlide)
       parentSlide = React.cloneElement(parentSlide, {}, children)

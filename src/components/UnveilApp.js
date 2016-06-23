@@ -113,8 +113,8 @@ export default React.createClass({
     this.map = this.buildMap(this.slides)
 
     this.router = createRouter({
-      map: this.map,
-      history: this.history,
+      map:           this.map,
+      history:       this.history,
       getDirections: this.getDirections
     })
 
@@ -161,7 +161,7 @@ export default React.createClass({
     let parentSlide = this.slides[target[0]]
 
     if (this.areSlides(parentSlide.props.children)) {
-      let children = parentSlide.props.children
+      let children = cloneDeep(parentSlide.props.children)
       children.push(newSlide)
       parentSlide = React.cloneElement(parentSlide, {}, children)
     } else {
@@ -187,10 +187,13 @@ export default React.createClass({
         break
 
       case 'under':
-      default:
         this.addSubslide(i, data.slide)
         this.router.setMap(this.buildMap(this.slides))
         this.router.go(i, this.routerState.query)
+        break
+
+      default:
+        break
     }
   },
 

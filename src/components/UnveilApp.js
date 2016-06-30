@@ -167,10 +167,10 @@ export default React.createClass({
     } else {
       let newSubslide = React.createElement(
         Slide,
-        {id: `${parentSlide.props.id}-0`, name: `0`},
+        {id: parentSlide.props.name, name: '0'},
         cloneDeep(parentSlide.props.children)
       )
-      parentSlide = React.createElement(Slide, {id: parentSlide.props.id, name: parentSlide.props.name}, [newSubslide, newSlide])
+      parentSlide = React.createElement(Slide, {id: `${parentSlide.props.id}-0`, name: parentSlide.props.name}, [newSubslide, newSlide])
     }
 
     this.slides.splice(target[0], 1, parentSlide)
